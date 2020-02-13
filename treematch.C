@@ -7,7 +7,10 @@ class Node {
 public:
   Node(std::string label) : _label(label) {}
   Node(std::string label, std::initializer_list<Node *> children)
-      : _children(children), _label(label) {}
+      : _children(children), _label(label) {
+    for (auto &c : _children)
+      c->_parent = this;
+  }
   ~Node() {
     for (auto &c : _children)
       delete c;
@@ -23,10 +26,16 @@ public:
 
 protected:
   std::vector<Node *> _children;
+  Node *_parent;
   std::string _label;
 };
 
-// compare two sub trees
+class WildcardNode : public Node {
+public:
+  WildcardNode(std::string label) : Node(label) {}
+};
+
+// compare two sub trees without wildcards!
 bool same(Node *a, Node *b) {
   // same label?
   if (a->label() != b->label())
@@ -79,78 +88,31 @@ void deleteChain(BackTrackLink *chain) {
   delete chain;
 }
 
-struct TreeNode {
-  const Node *_self;
-  const Node *_parent;
-  std::size_t _size;
-};
-
-// preprocessed tree wrapper for a raw node structure
-class Tree {
-public:
-  Tree(Node *root);
-
-  void print();
-
-protected:
-  std::size_t traverse(const Node *self, const Node *parent);
-
-  std::vector<TreeNode> _serialized;
-  const Node *_root;
-};
-
-Tree::Tree(Node *root) : _root(root) { traverse(_root, nullptr); }
-
-void Tree::print() {
-  for (auto item : _serialized)
-    std::cout << item._self->label() << '\t'
-              << (item._parent ? item._parent->label() : "[NULL]") << '\t'
-              << item._size << '\n';
-}
-
-std::size_t Tree::traverse(const Node *self, const Node *parent) {
-  // get the current index
-  auto idx = _serialized.size();
-
-  // add self and parent
-  TreeNode me;
-  me._self = self;
-  me._parent = parent;
-
-  // push into the serialized vector (at position idx)
-  _serialized.push_back(me);
-
-  // recurse into children
-  std::size_t size = 1;
-  for (auto c : self->children())
-    size += traverse(c, self);
-
-  // update size
-  _serialized[idx]._size = size;
-
-  return size;
-}
-
 // backtracking tree match
 class BackTrackMatch {
 public:
-  BackTrackMatch(const Tree &pattern, const Tree &target)
+  BackTrackMatch(const Node *pattern, const Node *target)
       : _pattern(pattern), _target(target) {}
   bool run();
 
 protected:
   BackTrackLink *decide(BackTrackLink *);
-  const Tree &_pattern;
-  const Tree &_target;
+  const Node *const _pattern;
+  const Node *const _target;
 
-  std::size_t _p_idx;
-  std::size_t _t_idx;
+  const Node *_p_it;
+  const Node *_t_it;
 };
 
 // user facing API to match a patetrn to a target
 bool BackTrackMatch::run() {
   // set pattern and target pointers target and
-  return true;
+  _p_it = _pattern;
+  _t_it = _target;
+
+  auto result = decide(nullptr);
+
+  return result != nullptr;
 }
 
 // backtracking algorithm (recursive function)
@@ -180,15 +142,22 @@ BackTrackLink *BackTrackMatch::decide(BackTrackLink *chain) {
 // entry point
 int main() {
   // raw tree
-  auto root =
-      new Node("+", {new Node("^2", {new Node("sin", {new Node("a")})}),
-                     new Node("^2", {new Node("cos", {new Node("a")})})});
-  root->print();
+  auto pattern =
+      new Node("+", {new WildcardNode("[*A]"), new WildcardNode("[*A]")});
+
+  auto replace = new Node("*", {new Node("2"), new WildcardNode("[*A]")});
+
+  auto target = new Node("+", {new Node("sin", {new Node("x")}),
+                               new Node("sin", {new Node("x")})});
+
+  pattern->print();
   std::cout << '\n';
 
-  // processed tree
-  Tree tree(root);
-  tree.print();
+  replace->print();
+  std::cout << '\n';
+
+  target->print();
+  std::cout << '\n';
 
   return 0;
 }
