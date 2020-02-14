@@ -5,10 +5,8 @@ Node::Node(std::string label) : NodeBase(), _label(label) {}
 Node::Node(std::string label, std::initializer_list<NodeBase *> children)
     : NodeBase(children), _label(label) {}
 
-void Node::print(std::string indent) {
-  std::cout << indent << '\'' << _label << "'\t[" << _hash << "]\n";
-  for (auto &c : _children)
-    c->print(indent + "  ");
+void Node::printLocal() const {
+  std::cout << '"' << _label << '"';
 }
 
 void Node::updateLocalHash() {

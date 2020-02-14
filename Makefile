@@ -13,4 +13,4 @@ treematch: $(OBJS)
 	$(CXX) -std=c++11 -MM $(CXXFLAGS) $(CPPFLAGS) $*.C > $*.d
 
 clean:
-	rm treematch $(OBJS)
+	rm treematch $(OBJS) *.d

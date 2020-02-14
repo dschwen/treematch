@@ -5,9 +5,9 @@
 class WildcardNode : public NodeBase {
 public:
   // we'll make this private and add BackTrackMatch as a friend
-  WildcardNode(unsigned int id);
+  WildcardNode(WildcardID id);
 
-  void print(std::string indent = "") override;
+  void printLocal() const override;
   void updateLocalHash() override;
 
   bool operator==(const NodeBase &rhs) const override;
@@ -17,7 +17,7 @@ protected:
   /// integer, positive results etc.)
   virtual bool restriction(const NodeBase &rhs) const { return true; }
 
-  unsigned int _id;
+  WildcardID _id;
 
 private:
   static const std::size_t _class_hash;

@@ -13,6 +13,15 @@ NodeBase::~NodeBase() {
     delete c;
 }
 
+void NodeBase::print(std::string indent) const {
+  std::cout << indent;
+  printLocal();
+  std::cout << '\n';
+
+  for (auto &c : _children)
+    c->print(indent + "  ");
+}
+
 void NodeBase::updateHash() {
   // hash the node specific data
   updateLocalHash();

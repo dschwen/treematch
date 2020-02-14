@@ -1,7 +1,6 @@
 #include <bitset>
 #include <cstdint>
 #include <functional>
-#include <initializer_list>
 #include <iostream>
 #include <set>
 #include <unordered_map>
@@ -9,7 +8,9 @@
 
 #pragma once
 
-/// fast bistmask tyop for wildcard occurence in subtrees
+// Wildcard ID number type
+using WildcardID = unsigned int;
+/// fast bitmask type for wildcard occurence in subtrees
 using WildcardMask = uint32_t;
 
 class NodeBase;
@@ -22,7 +23,8 @@ public:
   const std::vector<NodeBase *> &children() const { return _children; }
   const std::size_t &hash() const { return _hash; }
 
-  virtual void print(std::string indent = "") = 0;
+  void print(std::string indent = "") const;
+  virtual void printLocal() const = 0;
   virtual void updateLocalHash() = 0;
 
   void updateHash();
@@ -31,6 +33,12 @@ public:
 
   virtual bool operator==(const NodeBase &rhs) const = 0;
   bool operator!=(const NodeBase &rhs) const { return !(*this == rhs); };
+
+  // compare subtrees without wild card matches
+  bool isSameTree(NodeBase * rhs);
+
+  // compare with wildcard application
+  bool match(NodeBase * rhs/* , DecisionTreeNode * dtree */);
 
 protected:
   std::vector<NodeBase *> _children;
