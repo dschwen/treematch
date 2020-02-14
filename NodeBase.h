@@ -1,4 +1,5 @@
 #include <bitset>
+#include <cstdint>
 #include <functional>
 #include <initializer_list>
 #include <iostream>
@@ -8,10 +9,13 @@
 
 #pragma once
 
+/// fast bistmask tyop for wildcard occurence in subtrees
+using WildcardMask = uint32_t;
+
 class NodeBase;
 class NodeBase {
 public:
-  NodeBase() {}
+  NodeBase();
   NodeBase(std::initializer_list<NodeBase *> children);
   virtual ~NodeBase();
 
@@ -32,4 +36,9 @@ protected:
   std::vector<NodeBase *> _children;
   NodeBase *_parent;
   std::size_t _hash;
+
+  WildcardMask _wildcard_mask;
+
+  // permit at most 32 different wildcards
+  static constexpr unsigned char MAX_ID = 32;
 };

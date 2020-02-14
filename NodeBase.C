@@ -1,7 +1,9 @@
 #include "NodeBase.h"
 
+NodeBase::NodeBase() : _wildcard_mask(0) {}
+
 NodeBase::NodeBase(std::initializer_list<NodeBase *> children)
-    : _children(children) {
+    : _children(children), _wildcard_mask(0) {
   for (auto &c : _children)
     c->_parent = this;
 }

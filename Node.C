@@ -1,5 +1,7 @@
 #include "Node.h"
 
+Node::Node(std::string label) : NodeBase(), _label(label) {}
+
 Node::Node(std::string label, std::initializer_list<NodeBase *> children)
     : NodeBase(children), _label(label) {}
 

@@ -4,7 +4,7 @@
 
 class Node : public NodeBase {
 public:
-  Node(std::string label) : NodeBase(), _label(label) {}
+  Node(std::string label);
   Node(std::string label, std::initializer_list<NodeBase *> children);
 
   const std::string &label() const { return _label; }

@@ -1,4 +1,10 @@
 #include "WildcardNode.h"
+#include <stdexcept>
+
+WildcardNode::WildcardNode(unsigned int id) : NodeBase(), _id(id) {
+  if (id >= NodeBase::MAX_ID)
+    throw std::out_of_range("invalid wildcard ID");
+}
 
 void WildcardNode::print(std::string indent) {
   std::cout << indent << "*[" << _id << "]\t[" << _hash << "]\n";
