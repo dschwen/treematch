@@ -6,7 +6,7 @@ Node::Node(std::string label, std::initializer_list<NodeBase *> children)
     : NodeBase(children), _label(label) {}
 
 void Node::printLocal() const {
-  std::cout << '"' << _label << '"';
+  std::cout << '"' << _label << "\t[" << _hash << ']';
 }
 
 void Node::updateLocalHash() {

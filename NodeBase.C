@@ -79,3 +79,32 @@ void NodeBase::updateHash(
   // add to hash set
   hash_map.insert(std::make_pair(_hash, this));
 }
+
+// compare subtrees without wild card matches
+bool NodeBase::isSameTree(NodeBase * rhs)
+{
+  // same hashes?
+  if (_hash != rhs->hash())
+    return false;
+
+  // locally same?
+  if (*this != *rhs)
+    return false;
+
+  // same number of children?
+  const auto c_size = _children.size();
+  if (c_size != rhs->children().size())
+    return false;
+
+  // all children are the same
+  for (std::size_t i = 0; i < c_size; ++i)
+    if (!_children[i]->isSameTree(rhs->children()[i]))
+      return false;
+
+  return true;
+}
+
+// compare with wildcard application
+bool NodeBase::match(NodeBase * rhs/* , DecisionTreeNode * dtree */) {
+  return false;
+}

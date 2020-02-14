@@ -2,28 +2,6 @@
 #include "NodeBase.h"
 #include "WildcardNode.h"
 
-// compare two sub trees without wildcards!
-bool same(NodeBase *a, NodeBase *b) {
-  // same hashes?
-  if (a->hash() != b->hash())
-    return false;
-
-  // locally same?
-  if (*a != *b)
-    return false;
-
-  // same number of children?
-  const auto a_size = a->children().size();
-  if (a_size != b->children().size())
-    return false;
-
-  // all children are the same
-  for (std::size_t i = 0; i < a_size; ++i)
-    if (!same(a->children()[i], b->children()[i]))
-      return false;
-
-  return true;
-}
 
 // backtrack chain link
 class BackTrackLink;
