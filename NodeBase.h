@@ -25,6 +25,9 @@ public:
   void updateHash(std::set<std::size_t> &hash_set);
   void updateHash(std::unordered_multimap<std::size_t, NodeBase *> &hash_map);
 
+  virtual bool operator==(const NodeBase &rhs) const = 0;
+  bool operator!=(const NodeBase &rhs) const { return !(*this == rhs); };
+
 protected:
   std::vector<NodeBase *> _children;
   NodeBase *_parent;

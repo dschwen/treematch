@@ -10,8 +10,9 @@ public:
   const std::string &label() const { return _label; }
 
   void print(std::string indent = "") override;
-
   void updateLocalHash() override;
+
+  bool operator==(const NodeBase &rhs) const override;
 
 protected:
   std::string _label;

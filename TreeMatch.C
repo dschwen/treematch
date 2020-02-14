@@ -1,15 +1,15 @@
-
 #include "Node.h"
+#include "NodeBase.h"
 #include "WildcardNode.h"
 
 // compare two sub trees without wildcards!
-bool same(Node *a, Node *b) {
+bool same(NodeBase *a, NodeBase *b) {
   // same hashes?
   if (a->hash() != b->hash())
     return false;
 
-  // same label?
-  if (a->label() != b->label())
+  // locally same?
+  if (*a != *b)
     return false;
 
   // same number of children?
@@ -29,7 +29,7 @@ bool same(Node *a, Node *b) {
 class BackTrackLink;
 class BackTrackLink {
 public:
-  using DataType = std::pair<std::string, Node *>;
+  using DataType = std::pair<std::string, NodeBase *>;
 
   BackTrackLink(BackTrackLink *parent, DataType data)
       : _parent(parent), _data(data) {}
@@ -40,7 +40,7 @@ public:
 
 // does the chain contain the given pointer (i.e. is a node already consumed as
 // a match?)
-bool containsNode(BackTrackLink *chain, Node *node) {
+bool containsNode(BackTrackLink *chain, NodeBase *node) {
   if (!chain)
     return false;
 
@@ -62,17 +62,17 @@ void deleteChain(BackTrackLink *chain) {
 // backtracking tree match
 class BackTrackMatch {
 public:
-  BackTrackMatch(const Node *pattern, const Node *target)
+  BackTrackMatch(const NodeBase *pattern, const NodeBase *target)
       : _pattern(pattern), _target(target) {}
   bool run();
 
 protected:
   BackTrackLink *decide(BackTrackLink *);
-  const Node *const _pattern;
-  const Node *const _target;
+  const NodeBase *const _pattern;
+  const NodeBase *const _target;
 
-  const Node *_p_it;
-  const Node *_t_it;
+  const NodeBase *_p_it;
+  const NodeBase *_t_it;
 };
 
 // user facing API to match a patetrn to a target
@@ -113,10 +113,9 @@ BackTrackLink *BackTrackMatch::decide(BackTrackLink *chain) {
 // entry point
 int main() {
   // raw tree
-  auto pattern =
-      new Node("+", {new WildcardNode("[*A]"), new WildcardNode("[*A]")});
+  auto pattern = new Node("+", {new WildcardNode(0), new WildcardNode(0)});
 
-  auto replace = new Node("*", {new Node("2"), new WildcardNode("[*A]")});
+  auto replace = new Node("*", {new Node("2"), new WildcardNode(0)});
 
   auto target = new Node("+", {new Node("sin", {new Node("x")}),
                                new Node("sin", {new Node("x")})});

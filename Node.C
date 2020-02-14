@@ -14,4 +14,9 @@ void Node::updateLocalHash() {
   _hash = _class_hash ^ std::hash<std::string>{}(_label);
 }
 
+bool Node::operator==(const NodeBase &rhs) const {
+  const auto ptr = dynamic_cast<const Node *>(&rhs);
+  return ptr && (_label == ptr->_label);
+}
+
 const std::size_t Node::_class_hash = typeid(Node).hash_code();
