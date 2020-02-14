@@ -1,3 +1,4 @@
+#include <functional>
 #include <initializer_list>
 #include <iostream>
 #include <vector>
@@ -17,17 +18,28 @@ public:
   }
   const std::vector<Node *> &children() const { return _children; }
   const std::string &label() const { return _label; }
+  const std::size_t &hash() const { return _hash; }
 
   void print(std::string indent = "") {
-    std::cout << indent << _label << '\n';
+    std::cout << indent << _label << "\t[" << _hash << "]\n";
     for (auto &c : _children)
       c->print(indent + "  ");
+  }
+
+  void updateHash() {
+    _hash = std::hash<std::string>{}(_label);
+    for (auto &c : _children) {
+      _hash <<= 1;
+      c->updateHash();
+      _hash ^= c->_hash;
+    }
   }
 
 protected:
   std::vector<Node *> _children;
   Node *_parent;
   std::string _label;
+  std::size_t _hash;
 };
 
 class WildcardNode : public Node {
@@ -37,6 +49,10 @@ public:
 
 // compare two sub trees without wildcards!
 bool same(Node *a, Node *b) {
+  // same hashes?
+  if (a->hash() != b->hash())
+    return false;
+
   // same label?
   if (a->label() != b->label())
     return false;
@@ -150,12 +166,15 @@ int main() {
   auto target = new Node("+", {new Node("sin", {new Node("x")}),
                                new Node("sin", {new Node("x")})});
 
+  pattern->updateHash();
   pattern->print();
   std::cout << '\n';
 
+  replace->updateHash();
   replace->print();
   std::cout << '\n';
 
+  target->updateHash();
   target->print();
   std::cout << '\n';
 
