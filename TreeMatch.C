@@ -1,51 +1,6 @@
-#include <functional>
-#include <initializer_list>
-#include <iostream>
-#include <vector>
 
-class Node;
-class Node {
-public:
-  Node(std::string label) : _label(label) {}
-  Node(std::string label, std::initializer_list<Node *> children)
-      : _children(children), _label(label) {
-    for (auto &c : _children)
-      c->_parent = this;
-  }
-  ~Node() {
-    for (auto &c : _children)
-      delete c;
-  }
-  const std::vector<Node *> &children() const { return _children; }
-  const std::string &label() const { return _label; }
-  const std::size_t &hash() const { return _hash; }
-
-  void print(std::string indent = "") {
-    std::cout << indent << _label << "\t[" << _hash << "]\n";
-    for (auto &c : _children)
-      c->print(indent + "  ");
-  }
-
-  void updateHash() {
-    _hash = std::hash<std::string>{}(_label);
-    for (auto &c : _children) {
-      _hash <<= 1;
-      c->updateHash();
-      _hash ^= c->_hash;
-    }
-  }
-
-protected:
-  std::vector<Node *> _children;
-  Node *_parent;
-  std::string _label;
-  std::size_t _hash;
-};
-
-class WildcardNode : public Node {
-public:
-  WildcardNode(std::string label) : Node(label) {}
-};
+#include "Node.h"
+#include "WildcardNode.h"
 
 // compare two sub trees without wildcards!
 bool same(Node *a, Node *b) {
