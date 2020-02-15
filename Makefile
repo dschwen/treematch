@@ -1,7 +1,10 @@
 all: treematch
 
 CXX ?= clang++
-OBJS := Node.o NodeBase.o WildcardNode.o TreeMatch.o
+OBJS := src/Node.o src/NodeBase.o src/WildcardNode.o src/TreeMatch.o \
+				src/DecisionTreeNode.o
+
+CPPFLAGS += -Iinclude
 
 treematch: $(OBJS)
 	$(CXX) --std=c++11 -o treematch $(OBJS)

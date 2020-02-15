@@ -5,5 +5,5 @@
 class DecisionTreeNode : public NodeBase
 {
 protected:
-  std::vector<std::pair<WildCardID, NodeBase *>> _map;
+  std::vector<std::pair<WildcardID, NodeBase *>> _map;
 };
