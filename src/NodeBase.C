@@ -1,4 +1,6 @@
+#include "DecisionTreeNode.h"
 #include "NodeBase.h"
+
 #include <algorithm>
 
 NodeBase::NodeBase() : _wildcard_mask(0), _dying(false) {}
@@ -33,47 +35,12 @@ void NodeBase::print(std::string indent) const {
     c->print(indent + "  ");
 }
 
-void NodeBase::updateHash() {
-  // hash the node specific data
-  updateLocalHash();
-
-  for (auto &c : _children) {
-    // roll hash right (this avoids discarding information)
-    std::size_t low_bit = _hash << (sizeof(std::size_t) * 8 - 1);
-    _hash = (_hash >> 1) | low_bit;
-
-    // update child hash
-    c->updateHash();
-
-    // XOR child hash onto node hash
-    _hash ^= c->_hash;
-  }
-}
-
-void NodeBase::updateHash(std::set<std::size_t> &hash_set) {
-  // hash the node specific data
-  updateLocalHash();
-
-  for (auto &c : _children) {
-    // roll hash right (this avoids discarding information)
-    std::size_t low_bit = _hash << (sizeof(std::size_t) * 8 - 1);
-    _hash = (_hash >> 1) | low_bit;
-
-    // update child hash
-    c->updateHash(hash_set);
-
-    // XOR child hash onto node hash
-    _hash ^= c->_hash;
-  }
-
-  // add to hash set
-  hash_set.insert(_hash);
-}
-
 void NodeBase::updateHash(
-    std::unordered_multimap<std::size_t, NodeBase *> &hash_map) {
+    std::set<std::size_t> *hash_set,
+    std::unordered_multimap<std::size_t, NodeBase *> *hash_map) {
   // hash the node specific data
   updateLocalHash();
+  _wildcard_mask = 0;
 
   for (auto &c : _children) {
     // roll hash right (this avoids discarding information)
@@ -81,14 +48,20 @@ void NodeBase::updateHash(
     _hash = (_hash >> 1) | low_bit;
 
     // update child hash
-    c->updateHash(hash_map);
+    c->updateHash(hash_set, hash_map);
 
     // XOR child hash onto node hash
     _hash ^= c->_hash;
+    _wildcard_mask |= c->_wildcard_mask;
   }
 
   // add to hash set
-  hash_map.insert(std::make_pair(_hash, this));
+  if (hash_set)
+    hash_set->insert(_hash);
+
+  // add to hash map
+  if (hash_map)
+    hash_map->insert(std::make_pair(_hash, this));
 }
 
 // compare subtrees without wild card matches
@@ -115,8 +88,11 @@ bool NodeBase::isSameTree(NodeBase *rhs) {
 }
 
 // compare with wildcard application
-bool NodeBase::match(
-    NodeBase *rhs /* , DecisionTreeNode * root, DecisionTreeNode * leaf */) {
+bool NodeBase::match(NodeBase *rhs, DecisionTreeNode *root) {
+  // perform matching
+
+  // is a permutation required
+
   return false;
 }
 

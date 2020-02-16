@@ -13,6 +13,8 @@ using WildcardID = unsigned int;
 /// fast bitmask type for wildcard occurence in subtrees
 using WildcardMask = uint32_t;
 
+class DecisionTreeNode;
+
 class NodeBase;
 class NodeBase {
 public:
@@ -27,9 +29,10 @@ public:
   virtual void printLocal() const = 0;
   virtual void updateLocalHash() = 0;
 
-  void updateHash();
-  void updateHash(std::set<std::size_t> &hash_set);
-  void updateHash(std::unordered_multimap<std::size_t, NodeBase *> &hash_map);
+  /// update hash and wildcard mask in subtree
+  void updateHash(
+      std::set<std::size_t> *hash_set = nullptr,
+      std::unordered_multimap<std::size_t, NodeBase *> *hash_map = nullptr);
 
   virtual bool operator==(const NodeBase &rhs) const = 0;
   bool operator!=(const NodeBase &rhs) const { return !(*this == rhs); };
@@ -38,7 +41,7 @@ public:
   bool isSameTree(NodeBase *rhs);
 
   // compare with wildcard application
-  bool match(NodeBase *rhs /* , DecisionTreeNode * dtree */);
+  bool match(NodeBase *rhs, DecisionTreeNode *dtree);
 
   /// remove given node from teh list of child nodes
   void unlinkChild(NodeBase *child);
