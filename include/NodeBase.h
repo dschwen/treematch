@@ -9,7 +9,7 @@
 #pragma once
 
 // Wildcard ID number type
-using WildcardID = unsigned int;
+using WildcardID = int;
 /// fast bitmask type for wildcard occurence in subtrees
 using WildcardMask = uint32_t;
 
@@ -20,7 +20,13 @@ class NodeBase {
 public:
   NodeBase();
   NodeBase(std::initializer_list<NodeBase *> children);
+
+  // deep copy constructor
+  NodeBase(const NodeBase *rhs);
+
   virtual ~NodeBase();
+
+  virtual NodeBase *clone() const = 0;
 
   const std::vector<NodeBase *> &children() const { return _children; }
   const std::size_t &hash() const { return _hash; }
@@ -41,10 +47,16 @@ public:
   bool isSameTree(NodeBase *rhs);
 
   // compare with wildcard application
-  bool match(NodeBase *rhs, DecisionTreeNode *dtree);
+  virtual bool match(NodeBase *rhs, DecisionTreeNode *dtree);
 
   /// remove given node from teh list of child nodes
   void unlinkChild(NodeBase *child);
+
+  /// add a child
+  void linkChild(NodeBase *child);
+
+  /// append clones leaves
+  void addClonesToLeaves(NodeBase *child);
 
   /// remove branch (including all parents this branch is the only child of)
   void prune();

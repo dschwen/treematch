@@ -1,7 +1,9 @@
+#include "DecisionTreeNode.h"
 #include "WildcardNode.h"
+
 #include <stdexcept>
 
-WildcardNode::WildcardNode(unsigned int id) : NodeBase(), _id(id) {
+WildcardNode::WildcardNode(WildcardID id) : NodeBase(), _id(id) {
   if (id >= NodeBase::MAX_ID)
     throw std::out_of_range("invalid wildcard ID");
 }
@@ -25,6 +27,25 @@ bool WildcardNode::operator==(const NodeBase &rhs) const {
 
   // go through decision tree
   return false;
+}
+
+bool WildcardNode::match(NodeBase *rhs, DecisionTreeNode *root) {
+  // look up if a mapping already exits
+  DecisionTreeNode *i = root;
+  while (i) {
+    if (i->map()[_id]) {
+      if (i->map()[_id]->isSameTree(rhs))
+        return true;
+      return false;
+    }
+    // i = i->parent();
+  }
+
+  // no mapping exists. add it
+  std::make_pair(_id, rhs);
+
+  // this wildcard matches every node
+  return true;
 }
 
 const std::size_t WildcardNode::_class_hash = typeid(WildcardNode).hash_code();

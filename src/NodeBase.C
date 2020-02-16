@@ -11,6 +11,13 @@ NodeBase::NodeBase(std::initializer_list<NodeBase *> children)
     c->_parent = this;
 }
 
+NodeBase::NodeBase(const NodeBase *rhs) {
+  _wildcard_mask = rhs->_wildcard_mask;
+  _dying = rhs->_dying;
+  for (auto &c : _children)
+    _children.push_back(c->clone());
+}
+
 NodeBase::~NodeBase() {
   // going into teardown state
   _dying = true;
@@ -89,9 +96,17 @@ bool NodeBase::isSameTree(NodeBase *rhs) {
 
 // compare with wildcard application
 bool NodeBase::match(NodeBase *rhs, DecisionTreeNode *root) {
-  // perform matching
+  // perform matching (no wildcard)
+  if (_wildcard_mask == 0)
+    return isSameTree(rhs);
 
   // is a permutation required
+  // for all permutations
+  // {
+  //   auto * branch = new DecisionTreeNode
+  //   root->append(branch)
+  //   recurse into all children
+  // }
 
   return false;
 }
@@ -100,6 +115,17 @@ void NodeBase::unlinkChild(NodeBase *child) {
   auto it = std::find(_children.begin(), _children.end(), child);
   if (it != _children.end())
     _children.erase(it);
+}
+
+void NodeBase::linkChild(NodeBase *child) { _children.push_back(child); }
+
+void NodeBase::addClonesToLeaves(NodeBase *child) {
+  if (_children.empty())
+    linkChild(child->clone());
+  else {
+    for (auto &c : _children)
+      c->addClonesToLeaves(child);
+  }
 }
 
 void NodeBase::prune() {
