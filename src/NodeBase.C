@@ -92,8 +92,7 @@ void NodeBase::updateHash(
 }
 
 // compare subtrees without wild card matches
-bool NodeBase::isSameTree(NodeBase * rhs)
-{
+bool NodeBase::isSameTree(NodeBase *rhs) {
   // same hashes?
   if (_hash != rhs->hash())
     return false;
@@ -116,19 +115,18 @@ bool NodeBase::isSameTree(NodeBase * rhs)
 }
 
 // compare with wildcard application
-bool NodeBase::match(NodeBase * rhs/* , DecisionTreeNode * root, DecisionTreeNode * leaf */) {
+bool NodeBase::match(
+    NodeBase *rhs /* , DecisionTreeNode * root, DecisionTreeNode * leaf */) {
   return false;
 }
 
-void NodeBase::unlinkChild(NodeBase * child)
-{
+void NodeBase::unlinkChild(NodeBase *child) {
   auto it = std::find(_children.begin(), _children.end(), child);
   if (it != _children.end())
     _children.erase(it);
 }
 
-void NodeBase::prune()
-{
+void NodeBase::prune() {
   if (_parent && _parent->children().size() == 1)
     _parent->prune();
   else

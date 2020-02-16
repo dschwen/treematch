@@ -35,13 +35,13 @@ public:
   bool operator!=(const NodeBase &rhs) const { return !(*this == rhs); };
 
   // compare subtrees without wild card matches
-  bool isSameTree(NodeBase * rhs);
+  bool isSameTree(NodeBase *rhs);
 
   // compare with wildcard application
-  bool match(NodeBase * rhs/* , DecisionTreeNode * dtree */);
+  bool match(NodeBase *rhs /* , DecisionTreeNode * dtree */);
 
   /// remove given node from teh list of child nodes
-  void unlinkChild(NodeBase * child);
+  void unlinkChild(NodeBase *child);
 
   /// remove branch (including all parents this branch is the only child of)
   void prune();

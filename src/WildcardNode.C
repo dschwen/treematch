@@ -6,9 +6,7 @@ WildcardNode::WildcardNode(unsigned int id) : NodeBase(), _id(id) {
     throw std::out_of_range("invalid wildcard ID");
 }
 
-void WildcardNode::printLocal() const {
-  std::cout << "*[" << _id << ']';
-}
+void WildcardNode::printLocal() const { std::cout << "*[" << _id << ']'; }
 
 void WildcardNode::updateLocalHash() {
   // hash the node specific data

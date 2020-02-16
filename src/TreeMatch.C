@@ -2,7 +2,6 @@
 #include "NodeBase.h"
 #include "WildcardNode.h"
 
-
 // backtrack chain link
 class BackTrackLink;
 class BackTrackLink {
@@ -107,7 +106,7 @@ int main() {
 
   leaf->prune();
 
-  //test->updateHash();
+  // test->updateHash();
   test->print();
   std::cout << '\n';
 
