@@ -98,17 +98,30 @@ int main() {
   auto target = new Node("+", {new Node("sin", {new Node("x")}),
                                new Node("sin", {new Node("x")})});
 
-  pattern->updateHash();
-  pattern->print();
+  auto leaf = new Node("x");
+  auto test = new Node("+", {new Node("sin", {new Node("x")}),
+                             new Node("sin", {new Node("log", {leaf})})});
+  test->updateHash();
+  test->print();
   std::cout << '\n';
 
-  replace->updateHash();
-  replace->print();
+  leaf->prune();
+
+  //test->updateHash();
+  test->print();
   std::cout << '\n';
 
-  target->updateHash();
-  target->print();
-  std::cout << '\n';
+  // pattern->updateHash();
+  // pattern->print();
+  // std::cout << '\n';
+  //
+  // replace->updateHash();
+  // replace->print();
+  // std::cout << '\n';
+  //
+  // target->updateHash();
+  // target->print();
+  // std::cout << '\n';
 
   return 0;
 }

@@ -1,16 +1,27 @@
 #include "NodeBase.h"
+#include <algorithm>
 
-NodeBase::NodeBase() : _wildcard_mask(0) {}
+NodeBase::NodeBase() : _wildcard_mask(0), _dying(false) {}
 
 NodeBase::NodeBase(std::initializer_list<NodeBase *> children)
-    : _children(children), _wildcard_mask(0) {
+    : _children(children), _wildcard_mask(0), _dying(false) {
   for (auto &c : _children)
     c->_parent = this;
 }
 
 NodeBase::~NodeBase() {
+  // going into teardown state
+  _dying = true;
+
+  // delete all children
   for (auto &c : _children)
     delete c;
+
+  // if the parent is not in teardown mode remove self from list of children,
+  // otherwise it is both unnecessary and will invalidate teh iterator in the
+  // loop directly above.
+  if (_parent && !_parent->_dying)
+    _parent->unlinkChild(this);
 }
 
 void NodeBase::print(std::string indent) const {
@@ -105,6 +116,21 @@ bool NodeBase::isSameTree(NodeBase * rhs)
 }
 
 // compare with wildcard application
-bool NodeBase::match(NodeBase * rhs/* , DecisionTreeNode * dtree */) {
+bool NodeBase::match(NodeBase * rhs/* , DecisionTreeNode * root, DecisionTreeNode * leaf */) {
   return false;
+}
+
+void NodeBase::unlinkChild(NodeBase * child)
+{
+  auto it = std::find(_children.begin(), _children.end(), child);
+  if (it != _children.end())
+    _children.erase(it);
+}
+
+void NodeBase::prune()
+{
+  if (_parent && _parent->children().size() == 1)
+    _parent->prune();
+  else
+    delete this;
 }

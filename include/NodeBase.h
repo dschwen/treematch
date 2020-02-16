@@ -40,12 +40,19 @@ public:
   // compare with wildcard application
   bool match(NodeBase * rhs/* , DecisionTreeNode * dtree */);
 
+  /// remove given node from teh list of child nodes
+  void unlinkChild(NodeBase * child);
+
+  /// remove branch (including all parents this branch is the only child of)
+  void prune();
+
 protected:
   std::vector<NodeBase *> _children;
   NodeBase *_parent;
   std::size_t _hash;
 
   WildcardMask _wildcard_mask;
+  bool _dying;
 
   // permit at most 32 different wildcards
   static constexpr unsigned char MAX_ID = 32;
