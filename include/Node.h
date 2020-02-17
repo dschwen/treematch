@@ -1,25 +1,44 @@
 #include "NodeBase.h"
+#include <unordered_map>
 
 #pragma once
 
-class Node : public NodeBase {
+// Wildcard ID number type
+using WildcardID = int;
+/// fast bitmask type for wildcard occurence in subtrees
+using WildcardMask = uint32_t;
+
+class Node;
+class DecisionTreeNode;
+
+class Node : public NodeBase<Node> {
 public:
-  Node(std::string label);
-  Node(std::string label, std::initializer_list<NodeBase *> children);
+  Node();
+  Node(std::initializer_list<Node *> children);
 
   // deep copy constructor
-  Node(const Node *rhs) : NodeBase(rhs), _label(rhs->_label) {}
-  Node *clone() const override { return new Node(this); }
+  Node(const Node *rhs) : NodeBase<Node>(rhs), _wildcard_mask(0) {}
 
-  const std::string &label() const { return _label; }
+  const std::size_t &hash() const { return _hash; }
 
-  void printLocal() const override;
-  void updateLocalHash() override;
+  /// update hash and wildcard mask in subtree
+  void updateHash(
+      std::set<std::size_t> *hash_set = nullptr,
+      std::unordered_multimap<std::size_t, NodeBase *> *hash_map = nullptr);
+  virtual void updateLocalHash() = 0;
 
-  bool operator==(const NodeBase &rhs) const override;
+  // compare subtrees without wild card matches
+  bool isSameTree(Node *rhs);
+
+  // compare with wildcard application
+  virtual bool match(Node *rhs, DecisionTreeNode *dtree);
+
+  // permit at most 32 different wildcards
+  static constexpr unsigned char MAX_ID = 32;
 
 protected:
-  std::string _label;
+  std::size_t _hash;
+  WildcardMask _wildcard_mask;
 
 private:
   static const std::size_t _class_hash;

@@ -3,8 +3,8 @@
 
 #include <stdexcept>
 
-WildcardNode::WildcardNode(WildcardID id) : NodeBase(), _id(id) {
-  if (id >= NodeBase::MAX_ID)
+WildcardNode::WildcardNode(WildcardID id) : Node(), _id(id) {
+  if (id >= Node::MAX_ID)
     throw std::out_of_range("invalid wildcard ID");
 }
 
@@ -15,7 +15,7 @@ void WildcardNode::updateLocalHash() {
   _hash = _class_hash ^ std::hash<unsigned char>{}(_id);
 }
 
-bool WildcardNode::operator==(const NodeBase &rhs) const {
+bool WildcardNode::operator==(const Node &rhs) const {
   // comparing two wild card nodes
   const auto ptr = dynamic_cast<const WildcardNode *>(&rhs);
   if (ptr)
@@ -29,7 +29,7 @@ bool WildcardNode::operator==(const NodeBase &rhs) const {
   return false;
 }
 
-bool WildcardNode::match(NodeBase *rhs, DecisionTreeNode *root) {
+bool WildcardNode::match(Node *rhs, DecisionTreeNode *root) {
   // look up if a mapping already exits
   DecisionTreeNode *i = root;
   while (i) {
@@ -38,7 +38,7 @@ bool WildcardNode::match(NodeBase *rhs, DecisionTreeNode *root) {
         return true;
       return false;
     }
-    // i = i->parent();
+    i = i->parent();
   }
 
   // no mapping exists. add it

@@ -1,7 +1,7 @@
 all: treematch
 
 CXX ?= clang++
-OBJS := src/Node.o src/NodeBase.o src/WildcardNode.o src/TreeMatch.o \
+OBJS := src/Node.o src/SymNode.o src/WildcardNode.o src/TreeMatch.o \
 				src/DecisionTreeNode.o
 
 CPPFLAGS += -Iinclude
