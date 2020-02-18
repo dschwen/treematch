@@ -1,6 +1,7 @@
 #include "DecisionTreeNode.h"
 #include "WildcardNode.h"
 
+#include <array>
 #include <stdexcept>
 
 WildcardNode::WildcardNode(WildcardID id) : Node(), _id(id) {

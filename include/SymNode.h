@@ -14,7 +14,7 @@ public:
   const std::string &label() const { return _label; }
 
   void printLocal() const override;
-  virtual void updateLocalHash();
+  void updateLocalHash() override;
 
   bool operator==(const Node &rhs) const override;
 

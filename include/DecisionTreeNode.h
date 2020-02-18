@@ -1,6 +1,8 @@
 #include "Node.h"
 #include "NodeBase.h"
 
+#include <array>
+
 #pragma once
 
 class DecisionTreeNode;
