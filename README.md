@@ -1,4 +1,4 @@
-# treematch
+# treematch [![Build Status](https://travis-ci.org/dschwen/treematch.svg?branch=master)](https://travis-ci.org/dschwen/treematch)
 
 ## Goal
 
